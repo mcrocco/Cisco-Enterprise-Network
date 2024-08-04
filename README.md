@@ -1,7 +1,7 @@
 # Cisco-Enterprise-Network
 In this project, I create &amp; configure an enterprise network with Cisco devices
 
-<img src="https://i.imgur.com/288d1oQ.png"/>
+<img src="https://i.imgur.com/D273xem.png"/>
 
 In this project, we configure an entire Enterprise Cisco Network environment based on the 3-layer LAN Architecture.
 
@@ -15,7 +15,7 @@ In this project, we configure an entire Enterprise Cisco Network environment bas
 
 <p>For reference, pictured below is the network topology layout of the enterprise network. IP addresses of each network will be specified in the related objectives. </p>
 
-<img src="https://i.imgur.com/288d1oQ.png"/>
+<img src="https://i.imgur.com/CIwUeap.png"/>
 
 <p>This Project will consist of 21 Objectives:
    
