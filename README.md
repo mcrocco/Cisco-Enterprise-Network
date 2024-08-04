@@ -1,5 +1,6 @@
+<img src="https://i.imgur.com/D273xem.png"/>
 # Cisco-Enterprise-Network
-In this project, I create &amp; configure an enterprise network with Cisco devices
+In this project, I create &amp; configure an enterprise network with Cisco devices.
 
 <img src="https://i.imgur.com/D273xem.png"/>
 
