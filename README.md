@@ -15,6 +15,8 @@ In this project, we configure an entire Enterprise Cisco Network environment bas
 
 <p>For reference, pictured below is the network topology layout of the enterprise network. IP addresses of each network will be specified in the related objectives. </p>
 
+<img src="https://i.imgur.com/288d1oQ.png"/>
+
 <p>This Project will consist of 21 Objectives:
    
 1. Setup Hostnames
@@ -45,9 +47,9 @@ In this project, we configure an entire Enterprise Cisco Network environment bas
 
 <p><h3>1. Setup Hostnames</h3>
 
-- In this step, we will set up the hostnames of each switch & router through their CLIs. In the picture below, you can see that I entered global configuration mode and entered “hostname AS-SW1” on the first access-layer switch in the IT department. (project 1 pic)</p>
+- In this step, we will set up the hostnames of each switch & router through their CLIs. In the picture below, you can see that I entered global configuration mode and entered “hostname AS-SW1” on the first access-layer switch in the IT department. </p>
   
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/N147OW0.png"/>
 <p>
 - Now repeat this process for each network device via the CLI.
 - We will also configure a user account, secrets, & an inactivity timeout at the end of the project for security purposes. </p>
@@ -56,20 +58,20 @@ In this project, we configure an entire Enterprise Cisco Network environment bas
 
 - In this step, we will be configuring VLANs & EtherChannels for the access layer & distribution layer switches
 - Because we are using Cisco devices, we will be using PAgP (port aggregation protocol) for our EtherChannels. We are configuring these because this will increase the overall bandwidth between each configured device, as well as provide redundancy in case an interface stops functioning properly. 
-- Let's start forming an EtherChannel between DS-SW1 and DS-SW2 in the IT department. In the CLI of DS-SW1, enter the command “show cdp neighbors” in privileged EXEC mode: (project 2 pic)</p>
+- Let's start forming an EtherChannel between DS-SW1 and DS-SW2 in the IT department. In the CLI of DS-SW1, enter the command “show cdp neighbors” in privileged EXEC mode:</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/XCJ8pTS.png"/>
 <p>
 - This allows us to see which interfaces are connected to other devices. Note that all of these only run Fast-Ethernet ports due to the Cisco model. In modern networks, all of these would be running at least on 1 Gigabit ports.
 - From this command, we can see that DS-SW1 is connected to DS-SW2 via its F0/4 & F0/5 interfaces. 
 - In global configuration mode, enter “interface range F0/4 - 5” to configure both interfaces at the same time.
-Enter “channel-group 1 mode desirable”. This will put these interfaces in port channel 1 and make the interfaces actively try to form an EtherChannel with DS-SW2 (project pic 3).</p>
+Enter “channel-group 1 mode desirable”. This will put these interfaces in port channel 1 and make the interfaces actively try to form an EtherChannel with DS-SW2.</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/AcmmQQq.png"/>
 <p>
-- Repeat these commands on DS-SW2’s interfaces connected to DS-SW1. Once complete, you can use the “show etherchannel summary” command to confirm that an EtherChannel has been formed (project pic 4).</p>
+- Repeat these commands on DS-SW2’s interfaces connected to DS-SW1. Once complete, you can use the “show etherchannel summary” command to confirm that an EtherChannel has been formed.</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/vBVhsQp.png"/>
 <p>
 - Notice the protocol is PAgP & next to the port channel SU appears, which means that the EtherChannel is currently in use. Additionally, the P next to the ports means that they are in the port channel. 
 - Repeat this process for DS-SW3 & DS-SW4 in the HR department.</p>
@@ -80,43 +82,42 @@ Enter “channel-group 1 mode desirable”. This will put these interfaces in po
 - In this step, we will configure all links between access switches & distribution switches as trunk links. This is so that we do not have to have a separate ethernet cable connection on each switch for each VLAN, but rather a trunk will allow all VLANs to travel via one connection (802.1Q tags will indicate the VLAN). The core switches will not have trunks as it is meant for pure speed, therefore we will have the distribution switches do all of the inter-VLAN routing.
 - Note that we will also be setting the native VLAN to an unused VLAN as a security measure. This protects the network from VLAN-hopping attacks. Also, if the native VLAN was also used for management of the devices and there was a misconfiguration that allowed an unauthorized device to connect to the access-switch, this could allow the device to make management changes and execute malicious attacks. 
 - As an overview, we will allow VLAN 10 (Management), 20 (Employees), & 30 (Interns) on all trunk ports for the IT department. For the HR department, VLAN 10, 30, & 40 (Employees) will be allowed. VLAN 90 will be our unused native VLAN, which will not be allowed on the trunk links. 
-- Starting in the IT department, let's start on DS-SW1. Enter “show cdp neighbors” to show which interfaces on the switch is connected to DS-SW2 as well as the 3 access-layer switches (project pic 5).</p>
+- Starting in the IT department, let's start on DS-SW1. Enter “show cdp neighbors” to show which interfaces on the switch is connected to DS-SW2 as well as the 3 access-layer switches.</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/zpOby1n.png"/>
 <p>
 - From the picture you can see that the 3 access-layer switches in the IT department are connected to the f0/1, f0/2, & f0/3 interfaces of DS-SW1.
-- Enter “interface range f0/1 - 3” in global configuration mode to configure all interfaces at once. Then enter the “switchport mode trunk” command to make them trunks (Note, you may run into a Command Rejected response if the interfaces were already running Dynamic Trunking Protocol (DTP). To fix this, change the interfaces to access ports, disable DTP via the “switchport nonegotiate” command, and then enter the “switchport mode trunk” command again (project pic 6). </p>
+- Enter “interface range f0/1 - 3” in global configuration mode to configure all interfaces at once. Then enter the “switchport mode trunk” command to make them trunks (Note, you may run into a Command Rejected response if the interfaces were already running Dynamic Trunking Protocol (DTP). To fix this, change the interfaces to access ports, disable DTP via the “switchport nonegotiate” command, and then enter the “switchport mode trunk” command again. </p>
 
-
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/TZwsJvm.png"/>
 <p>
 - To set the native VLAN on the trunk links, enter “switchport trunk native vlan 90”
 - To allow the rest of the VLANs, enter “switchport trunk allowed vlan 10,20,30”.
-- We have now completed the trunk links from DS-SW1 to all 3 of the access-layer switches. To configure the port-channel as trunks, enter “interface po1”, then repeat the commands above. Repeat all steps for DS-SW2, AS-SW1, AS-SW2, & AS-SW3 (access-layer switches will not have port channels). 
+- We have now completed the trunk links from DS-SW1 to all 3 of the access-layer switches. To configure the port channel as trunks, enter “interface po1”, then repeat the commands above. Repeat all steps for DS-SW2, AS-SW1, AS-SW2, & AS-SW3 (access-layer switches will not have port channels). 
 - The steps for the HR department are the same, except that there is VLAN 40 instead of VLAN 20. 
 </p>
 
 <p><h3>4. Configure VLANs via VTP</h3>
 
 - In this step, we will set up VTP on one of the distribution switches for each department. We will do this because enabling VTP would allow the distribution switch to act as a server and the rest of the switches clients in the domain. Instead of manually configuring VLANs on each device, the distribution switch can update the rest of the switches on which VLANs are configured and update them automatically. This allows all switches to stay up to date with VLANs as well as prevent any manual misconfigurations.
-- In the IT department, we will configure VTP on DS-SW1. In the command line, enter “show vtp status”. This will show us the current state of if VTP is currently in use or not (project pic 7).</p>
+- In the IT department, we will configure VTP on DS-SW1. In the command line, enter “show vtp status”. This will show us the current state of if VTP is currently in use or not.</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/G3xcbnh.png"/>
 <p>
 - Notice how the VTP Operating mode is already set as Server. This is the default for switches. However, there is no VTP domain set, and the current VTP version is 1. 
 - To configure a VTP domain name, enter global configuration mode, and enter the command “vtp domain Cisco”. This will create the Cisco VTP domain. Then enter “vtp version 2” to make the switch use version 2. We want version 2 because it can support extended VLANs beyond 1005. 
-- After these configurations, DS-SW1 should start sending VTP advertisements to the other switches, in which they should automatically join the Cisco domain. You can verify this by going to AS-SW1 and entering “show vtp status” (picture 8).</p>
+- After these configurations, DS-SW1 should start sending VTP advertisements to the other switches, in which they should automatically join the Cisco domain. You can verify this by going to AS-SW1 and entering “show vtp status”.</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/88YgYKr.png"/>
 <p>
 - Notice how the VTP Domain Name is Cisco and is running version 2. However, the VTP Operating Mode is the default Server option, and we only want DS-SW1 to be able to add VLANs to the IT department network. To change the VTP Operating Mode to client, enter the command “vtp mode client” in global configuration mode. 
 - Repeat this command for the rest of the switches (besides core) in the IT department.
 - In the HR department, we will do the exact same steps, configuring DS-SW3 as the VTP Server and creating the VTP Domain Cisco.
 - Now, we will create & name the VLANs on the VTP server. By doing this, all other switches that have joined the domain should automatically be configured with the VLANs as well. 
-- In the DS-SW1 command line, enter “vlan 10”, then “name Management” in global configuration mode. Then, repeat this process for vlan 20 & 30. We can verify that the VLANs and their names were created with the “show vlan brief” command (project 9). </p>
+- In the DS-SW1 command line, enter “vlan 10”, then “name Management” in global configuration mode. Then, repeat this process for vlan 20 & 30. We can verify that the VLANs and their names were created with the “show vlan brief” command. </p>
 
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/7Sgpy38.png"/>
 <p>
 - We will repeat the above commands for the HR Department on DS-SW3, except we will have Vlan 40 instead of 20 for employees. 
 </p>
@@ -124,9 +125,9 @@ Enter “channel-group 1 mode desirable”. This will put these interfaces in po
 <p><h3>5. Configure Access Ports</h3>
 
 - In this step, we will manually configure the access ports on all access-layer switches to make sure they are operating in access mode. We will also be managing which access ports are assigned to each VLAN. 
-- We will start in AS-SW1 in the IT department. Access ports are by default set to dynamic auto, meaning if they are connecting to another interface in dynamic desirable mode, the link will form a trunk. To stop this, we will disable DTP and manually enable access mode. In the command line, enter “show interfaces status” in privileged EXEC mode. This will allow us to see which interfaces are connected to the PCs (project 10).</p>
+- We will start in AS-SW1 in the IT department. Access ports are by default set to dynamic auto, meaning if they are connecting to another interface in dynamic desirable mode, the link will form a trunk. To stop this, we will disable DTP and manually enable access mode. In the command line, enter “show interfaces status” in privileged EXEC mode. This will allow us to see which interfaces are connected to the PCs.</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/epIYa2h.png"/>
 <p>
 - We can see that f0/1 & f0/2 are connected to the workstations via the Status column, as the rest of the ports are not connected and f0/3 & f0/4 are our trunk ports. 
 - In the command line, enter “interface range f0/1 - 2”, then “switchport mode access” to enable access mode. This will automatically disable DTP. 
@@ -137,34 +138,34 @@ Enter “channel-group 1 mode desirable”. This will put these interfaces in po
 
 <p><h3>6. Disable Unused Ports</h3>
 
-- In this step, we will disable all unused ports on access-layer & distribution layer switches. Let’s start on DS-SW1 again with the command “show interfaces status” in privileged EXEC mode (project 11). </p>
+- In this step, we will disable all unused ports on access-layer & distribution layer switches. Let’s start on DS-SW1 again with the command “show interfaces status” in privileged EXEC mode. </p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/zooqXUA.png"/>
 <p>
 - We can see from this command that interfaces from f0/6 to g0/2 are not connected to anything and therefore should be administratively disabled for security purposes. 
-- To disable these interfaces, enter the command “interface range f0/6-24, g0/1-2” in global configuration mode, then enter “shutdown” to disable the interfaces (project 12).</p>
+- To disable these interfaces, enter the command “interface range f0/6-24, g0/1-2” in global configuration mode, then enter “shutdown” to disable the interfaces.</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/IZYuxBu.png"/>
 <p>
 - From the picture above, you can see that they are now labeled as disabled in the Status column. Repeat this process for the rest of the switches including the HR department.
 </p>
 
 <p><h3>7. Configure R1’s IP addresses</h3>
 
-- We are now moving on to Layer 3 configuration of our enterprise network. We will start off with enabling the interfaces connected to each department’s core switches. On R1’s CLI, enter “show ip interface brief” and then “show cdp neighbors” (project 13).</p>
+- We are now moving on to Layer 3 configuration of our enterprise network. We will start off with enabling the interfaces connected to each department’s core switches. On R1’s CLI, enter “show ip interface brief” and then “show cdp neighbors”.</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/ps4y9kh.png"/>
 <p>
 - This is different from Cisco switches, as Cisco routers have all interfaces set to administratively down by default, while switch interfaces will be in the up status when connected to another interface.
-- To start with the interface connected to the IT department, enter the command “interface g0/0” and then “ip address 172.16.1.1 255.255.255.0”, then “no shutdown” to enable the interface. (project 14) </p>
+- To start with the interface connected to the IT department, enter the command “interface g0/0” and then “ip address 172.16.1.1 255.255.255.0”, then “no shutdown” to enable the interface.</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/4w0xgpY.png"/>
 <p>
 - For the interface connected to the HR department, g0/1, do the same commands but for the ip address of 172.16.2.1 /24. 
 - We will also create a loopback interface on R1, which is beneficial in case an interface shuts down unexpectedly and the IT or HR department need another way to reach the router. This is a virtual interface, so it does not need to be tied to one of R1’s physical interfaces. 
-- In the command line, enter “interface l0” in global configuration mode. Notice that the virtual interface was enabled by default. Then, enter “ip address 1.1.1.1 255.255.255.255” to give it an ip address. Let us confirm that each interface is assigned correctly with “do show ip interface brief” (project 15). </p>
+- In the command line, enter “interface l0” in global configuration mode. Notice that the virtual interface was enabled by default. Then, enter “ip address 1.1.1.1 255.255.255.255” to give it an ip address. Let us confirm that each interface is assigned correctly with “do show ip interface brief”. </p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/R69XwUF.png"/>
 
 <p><h3>8. Enable IP Routing on all Distribution & Core switches</h3>
 
@@ -175,15 +176,15 @@ Enter “channel-group 1 mode desirable”. This will put these interfaces in po
 <p><h3>9. Configure PAgP EtherChannel between Core Switches</h3>
 
 - This step will be similar to when we created an EtherChannel between the distribution switches, but at layer 3. 
-- On CS-SW1, enter “show cdp neighbors” to see which interfaces are connected to CS-SW2 (project 16). </p>
+- On CS-SW1, enter “show cdp neighbors” to see which interfaces are connected to CS-SW2. </p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/o7FZlVt.png"/>
 <p>
 - F0/5 & 6 are connected to CS-SW2. Enter “interface range f0/5-6”, then enter “no switchport” to make them routed ports. Finally, enter “channel-group 1 mode desirable”. We then must configure an ip address on the port channel interface for layer 3 EtherChannels. To do so, enter “interface po1”, then “ip address 172.16.3.1 255.255.255.0”.
 - On CS-SW2, repeat the same steps except with an IP address of 172.16.3.2 /24. 
-- Using the command “show etherchannel summary” will allow us to confirm that the PAgP EtherChannel was successful (project 17). </p>
+- Using the command “show etherchannel summary” will allow us to confirm that the PAgP EtherChannel was successful. </p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/tY2V3Ec.png"/>
 <p>
 - RU next to the port channel means that it is through layer 3 and it is successfully in use. 
 - You can also ping CS-SW2’s IP address from CS-SW1 CLI to confirm that they are able to reach each other. 
@@ -193,20 +194,20 @@ Enter “channel-group 1 mode desirable”. This will put these interfaces in po
 
 - In this step, we will manually configure IP address for each active interface, then disable any interfaces that are unused. 
 - Enter the command “show cdp neighbors” again on CS-SW1. We need to configure F0/1-4, as well as G0/1. 
-- Enter the IP address for each interface as shown (project 18). </p>
+- Enter the IP address for each interface as shown. </p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/1g9yc1h.png"/>
 <p>
 - For all other interfaces, enter the “shutdown” command to disable them.
-- Do the same configuration for CS-SW2 with the IP addresses shown (project 19).</p>
+- Do the same configuration for CS-SW2 with the IP addresses shown.</p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/vZIhthR.png"/>
 
 <p><h3>11. Configure IP addresses for all Distribution Switches</h3>
 
-- For DS-SW1, configure the IP addresses shown below (project 20) </p>
+- For DS-SW1, configure the IP addresses shown below. </p>
 
-<img src="https://i.imgur.com/vzNHH42.png"/>
+<img src="https://i.imgur.com/145DWKr.png"/>
 <p>
 - For DS-SW2, configure the IP addresses as shown (project 21). </p>
 
