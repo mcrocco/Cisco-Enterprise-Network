@@ -1,6 +1,6 @@
 # Cisco Enterprise LAN 3 Architecture 
 <img src="https://i.imgur.com/D273xem.png"/>
-In this project, I create &amp; configure an enterprise network with Cisco devices.
+
 
 In this project, we configure an entire Enterprise Cisco Network environment based on the 3-layer LAN Architecture.
 
